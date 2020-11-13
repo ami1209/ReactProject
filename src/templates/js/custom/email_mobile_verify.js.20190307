@@ -1,0 +1,90 @@
+var $ = jQuery.noConflict();
+$(document).ready(function() {
+    $("#emailVerify-btn").click(function(r) {
+        return $("#email_verify").modal({
+            show: !0
+        }), !1
+    }), $("#emailVerificationModal-resend-link").click(function() {
+        $("#resend-link-show").css("display", "none"), sendVerificationCode("/component/weaver/?task=account.sendVerificationCode", "email", "email_verify", "resend-link", "#resend-link-show")
+    }), $("#mobileVerify-btn").click(function(r) {
+        $("#resend-link-show-mobile").css("display", "none"), $("#mobile_verify").modal("hide"), sendVerificationCode("/component/weaver/?task=account.sendVerificationCode", "mobile", "mobile_verify", "btn")
+    }), $("#mobileVerificationModal-resend-link").click(function(r) {
+        $("#resend-link-show-mobile").css("display", "none"), $("#err-div").css("display", "none"), sendVerificationCode("/component/weaver/?task=account.sendVerificationCode", "mobile", "mobile_verify", "resend-link", "#resend-link-show-mobile")
+    }), $("#register_mobileVerificationModal_resend-link").click(function(r) {
+        $("#resend-link-show-mobile").css("display", "none"), $("#err-div").css("display", "none");
+        var e = reg_form_id_for_response,
+            o = "userName=" + $("#" + e + " #userName").val() + "&reg_password=" + $("#" + e + " #reg_password").val() + "&email=" + $("#" + e + " #email").val() + "&mobile=" + $("#" + e + " #mobile").val() + "&registrationType=" + $("#" + e + " #registrationType").val();
+        startAjax("/component/weaver/?task=registration.registrationOTP", o, getResponseOtp, "#" + e)
+    }), $("#continue-btn").click(function() {
+        return $("#resend-link-show-mobile").css("display", "none"), "" == $("#otpcode").val() ? (showToolTipErrorManual("otpcode", "Please enter code received on your mobile.", "bottom", $("#otpcode"), void 0), !1) : 4 != $("#otpcode").val().trim().length ? (showToolTipErrorManual("otpcode", "Code should be of four digits.", "bottom", $("#otpcode"), void 0), !1) : isNaN($("#otpcode").val()) ? (showToolTipErrorManual("otpcode", "Code should be numeric.", "bottom", $("#otpcode"), void 0), !1) : void verifyPlayer("/component/weaver/?task=account.verifyPlayer", $("#otpcode").val())
+    }), $("#register_continue-btn").click(function() {
+        if ($("#resend-link-show-mobile").css("display", "none"), "" == $("#otpcode").val()) return showToolTipErrorManual("otpcode", "Please enter code received on your mobile.", "bottom", $("#otpcode"), void 0), !1;
+        if (4 != $("#otpcode").val().trim().length) return showToolTipErrorManual("otpcode", "Code should be of four digits.", "bottom", $("#otpcode"), void 0), !1;
+        if (isNaN($("#otpcode").val())) return showToolTipErrorManual("otpcode", "Code should be numeric.", "bottom", $("#otpcode"), void 0), !1;
+        var r = reg_form_id_for_response, utm_data= location.href.split('?'),
+            e = "userName=" + $("#" + r + " #userName").val() + "&reg_password=" + $("#" + r + " #reg_password").val() + "&email=" + $("#" + r + " #email").val() + "&mobile=" + $("#" + r + " #mobile").val() + "&registrationType=" + $("#" + r + " #registrationType").val();
+	e += "&"+utm_data[1];
+
+        void 0 != $("#" + r + " #submiturl").val() && (e += "&submiturl=" + $("#" + r + " #submiturl").val()), e += "&otpcode=" + $("#otpcode").val(), reg_form_id_for_response = r, e += "&otpenable=" + $("#otp_enable").val(), startAjax("/component/weaver/?task=registration.playerRegistrationNew", e, getRegistrationOTPResponse, "#" + r) }), $("#otpcode").on("keyup", function(r) {
+        13 === r.keyCode && $("#register_continue-btn").click()
+    }), $("#email_verify").on("hidden.bs.modal", function(r) {
+        $("#resend-link-show").css("display", "none")
+    }), $("#register_mobile_verify").on("hidden.bs.modal", function(r) {
+        $("#resend-link-show-mobile").css("display", "none")
+    })
+});
+var modal_id = "",
+    calFrom = "",
+    linkId = "";
+
+function sendVerificationCode(r, e, o, i, s) {
+    modal_id = o, calFrom = i, linkId = s;
+    var a = "verificationField=" + e.toUpperCase();
+    if ("MOBILE" == e.toUpperCase()) {
+        if (0 == $("#mobile").val().length) return showToolTipErrorManual("mobile", "Please enter mobile no.", "bottom", $("#mobile"), void 0), !1;
+        if (10 != $("#mobile").val().length) return showToolTipErrorManual("mobile", "Mobile no. length should be of 10 digits.", "bottom", $("#mobile"), void 0), !1;
+        if (isNaN($("#mobile").val())) return showToolTipErrorManual("mobile", "Mobile no. should be numeric.", "bottom", $("#mobile"), void 0), !1;
+        if (0 == /^[5-9]{1}[0-9]{9}$/.test($("#mobile").val())) return showToolTipErrorManual("mobile", "Mobile no. is invalid.", "bottom", $("#mobile"), void 0), !1;
+        a += "&mobileNo=" + $("#mobile").val(), $("#modal-mobileNo").html("+91-" + $("#mobile").val())
+    }
+    startAjax(r, a, getResponse, "null")
+}
+
+function getResponse(r) {
+    if (0 == validateSession(r)) return !1;
+    var e = JSON.parse(r);
+    if (0 != e.errorCode) return $("#" + modal_id).modal("hide"), $("#alert-modal .modal-body .text-center").html(e.respMsg), $("#alert-modal").modal("show"), error_message(e.respMsg, null), !1;
+    "resend-link" == calFrom && ($(linkId).html(e.respMsg), $(linkId).css("display", "")), $("#" + modal_id).modal({
+        show: !0
+    })
+}
+
+function getResponseOtp(r) {
+    modal_id = "register_mobile_verify", calFrom = "resend-link", linkId = "#resend-link-show-mobile";
+    var e = JSON.parse(r);
+    if (0 != e.errorCode) return $("#" + modal_id).modal("hide"), error_message(e.respMsg, null), !1;
+    "resend-link" == calFrom && ($(linkId).html("OTP has been sent successfully"), $(linkId).css("display", "")), $("#" + modal_id).modal({
+        show: !0
+    })
+}
+
+function verifyPlayer(r, e) {
+    $("#err-div").html(""), $("#err-div").css("display", "none"), startAjax(r, "verificationField=mobile&verificationCode=" + e + "&verificationType=PROFILE", getResponseA, "null")
+}
+
+function getResponseA(r) {
+    if (0 == validateSession(r)) return !1;
+    var e = JSON.parse(r);
+    if (0 != e.errorCode) return showToolTipErrorManual("otpcode", e.respMsg, "bottom", $("#otpcode"), void 0), !1;
+    $("#" + modal_id).modal("hide"), $("#mobile_div").removeClass("do_verify"), $("#mobile_div").addClass("verify"), $("#mobile").attr("readonly", "readonly")
+}
+
+function getRegistrationOTPResponse(r) {
+    var e = $.parseJSON(r);
+    if ("false" == r) return showToolTipErrorManual("otpcode", "Please enter valid code.", "bottom", $("#otpcode"), void 0), !1;
+    if (0 != e.errorCode) {
+        var o = "left";
+        return "undefined" != $("#" + reg_form_id_for_response).attr("validation-style") && void 0 != $("#" + reg_form_id_for_response).attr("validation-style") && (o = $("#" + reg_form_id_for_response).attr("validation-style")), $("#register_mobile_verify").modal("hide"), "bootstrap" == $("#" + reg_form_id_for_response).attr("tooltip-mode") ? 501 == e.errorCode ? showToolTipError(reg_form_id_for_response + " #userName", e.respMsg, o, error_callback_registration[reg_form_id_for_response]) : 422 == e.errorCode ? showToolTipError(reg_form_id_for_response + " #refercode", e.respMsg, o, error_callback_registration[reg_form_id_for_response]) : 502 == e.errorCode ? showToolTipError(reg_form_id_for_response + " #email", e.respMsg, o, error_callback_registration[reg_form_id_for_response]) : 503 == e.errorCode ? showToolTipError(reg_form_id_for_response + " #mobile", e.respMsg, o, error_callback_registration[reg_form_id_for_response]) : 510 == e.errorCode ? (showToolTipError(reg_form_id_for_response + " #email", "Email already exists.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #mobile", "Mobile already exists.", o, error_callback_registration[reg_form_id_for_response])) : 511 == e.errorCode ? (showToolTipError(reg_form_id_for_response + " #userName", "Username already exists.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #mobile", "Mobile already exists.", o, error_callback_registration[reg_form_id_for_response])) : 512 == e.errorCode ? (showToolTipError(reg_form_id_for_response + " #userName", "Username already exists.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #email", "Email already exists.", o, error_callback_registration[reg_form_id_for_response])) : 513 == e.errorCode ? (showToolTipError(reg_form_id_for_response + " #userName", "Username already exists.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #email", "Email already exists.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #mobile", "Mobile already exists.", o, error_callback_registration[reg_form_id_for_response])) : 610 == e.errorCode ? (showToolTipError(reg_form_id_for_response + " #email", "Please Enter your Email.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #mobile", "Please Enter your Mobile.", o, error_callback_registration[reg_form_id_for_response])) : 611 == e.errorCode ? (showToolTipError(reg_form_id_for_response + " #userName", "Please Enter your Username.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #mobile", "Please Enter your Mobile.", o, error_callback_registration[reg_form_id_for_response])) : 612 == e.errorCode ? (showToolTipError(reg_form_id_for_response + " #userName", "Please Enter your Username.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #email", "Please Enter your Email.", o, error_callback_registration[reg_form_id_for_response])) : 613 == e.errorCode ? (showToolTipError(reg_form_id_for_response + " #userName", "Please Enter your Username.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #email", "Please Enter your Email.", o, error_callback_registration[reg_form_id_for_response]), showToolTipError(reg_form_id_for_response + " #mobile", "Please Enter your Mobile.", o, error_callback_registration[reg_form_id_for_response])) : showToolTipError(reg_form_id_for_response + " #userName", e.respMsg, o, error_callback_registration[reg_form_id_for_response]) : "manual" == $("#" + reg_form_id_for_response).attr("tooltip-mode") && (501 == e.errorCode ? showToolTipErrorManual(reg_form_id_for_response + " #userName", e.respMsg, o, $("#userName"), error_callback_registration[reg_form_id_for_response]) : 422 == e.errorCode ? showToolTipError(reg_form_id_for_response + " #refercode", e.respMsg, o, error_callback_registration[reg_form_id_for_response]) : 502 == e.errorCode ? showToolTipErrorManual(reg_form_id_for_response + " #email", e.respMsg, o, $("#email"), error_callback_registration[reg_form_id_for_response]) : 503 == e.errorCode ? showToolTipErrorManual(reg_form_id_for_response + " #mobile", e.respMsg, o, $("#mobile"), error_callback_registration[reg_form_id_for_response]) : 510 == e.errorCode ? (showToolTipErrorManual(reg_form_id_for_response + " #email", "Email already exists.", o, $("#email"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #mobile", "Mobile already exists.", o, $("#mobile"), error_callback_registration[reg_form_id_for_response])) : 511 == e.errorCode ? (showToolTipErrorManual(reg_form_id_for_response + " #userName", "Username already exists.", o, $("#userName"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #mobile", "Mobile already exists.", o, $("#mobile"), error_callback_registration[reg_form_id_for_response])) : 512 == e.errorCode ? (showToolTipErrorManual(reg_form_id_for_response + " #userName", "Username already exists.", o, $("#userName"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #email", "Email already exists.", o, $("#email"), error_callback_registration[reg_form_id_for_response])) : 513 == e.errorCode ? (showToolTipErrorManual(reg_form_id_for_response + " #userName", "Username already exists.", o, $("#userName"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #email", "Email already exists.", o, $("#email"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #mobile", "Mobile already exists.", o, $("#mobile"), error_callback_registration[reg_form_id_for_response])) : 610 == e.errorCode ? (showToolTipErrorManual(reg_form_id_for_response + " #email", "Please Enter your Email.", o, $("#email"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #mobile", "Please Enter your Mobile.", o, $("#mobile"), error_callback_registration[reg_form_id_for_response])) : 611 == e.errorCode ? (showToolTipErrorManual(reg_form_id_for_response + " #userName", "Please Enter your Username.", o, $("#userName"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #mobile", "Please Enter your Mobile.", o, $("#mobile"), error_callback_registration[reg_form_id_for_response])) : 612 == e.errorCode ? (showToolTipErrorManual(reg_form_id_for_response + " #userName", "Please Enter your Username.", o, $("#userName"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #email", "Please Enter your Email.", o, $("#email"), error_callback_registration[reg_form_id_for_response])) : 613 == e.errorCode ? (showToolTipErrorManual(reg_form_id_for_response + " #userName", "Please Enter your Username.", o, $("#userName"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #email", "Please Enter your Email.", o, $("#email"), error_callback_registration[reg_form_id_for_response]), showToolTipErrorManual(reg_form_id_for_response + " #mobile", "Please Enter your Mobile.", o, $("#mobile"), error_callback_registration[reg_form_id_for_response])) : showToolTipErrorManual(reg_form_id_for_response + " #userName", e.respMsg, o, $("#userName"), error_callback_registration[reg_form_id_for_response])), !1
+    }
+    location.href = e.path
+}

@@ -1,0 +1,443 @@
+function mixpanelPageViewWithLogin(domainName, userName, pageName, plrId, email, mobile, fname, lname, gender, dob, state, city, country, pincode, regIp, regDevice, regDate, status, cashBal, praticeBal, source, campignName, firstDepositDate, deviceType, appType, clientType, osType) {
+    return;
+    domainName=domainName.replace("https://", "");
+    domainName=domainName.replace("http://", "");
+    var page=pageName.split(".com");
+    regDate=parseDateForMixpanel(regDate);
+    if(firstDepositDate!="")firstDepositDate=parseDateForMixpanel(firstDepositDate);
+    if(page.length==1)pageView="/";
+    else pageView=page[1];
+    var refer_source="";
+    if(source=='NONE')refer_source="Direct";
+    else refer_source=source;
+    var profileStatus="MINI";
+    if(status=="FULL") {
+        profileStatus="FULL";
+    }
+    if(fname=="")fname="NA";
+    if(lname=="")lname="NA";
+    if(gender=="")gender="NA";
+    var dateFormat="";
+    if(dob=="") {
+        dob="1901-01-01T05:30:00";
+    }
+    if(state=="")state="NA";
+    if(city=="")city="NA";
+    if(pincode=="")pincode="NA";
+    if(cashBal==0.0)cashBal="0.00";
+    if(praticeBal==0.0)praticeBal="0.00";
+    if(campignName=="")campignName="NA";
+    var clientTypeVal="Full-Web";
+    if(clientType=="Mobile Web")clientTypeVal="Mobile-Web";
+    firstDepositDate=firstDepositDate==""?"1901-01-01T05:30:00":firstDepositDate;
+    mixpanel.identify(plrId);
+    mixpanel.people.set( {
+        "Balance": parseInt(cashBal)
+    }
+    );
+    mixpanel.track("Page View", {
+        "$distinct_id": plrId, "Domain Name": domainName, "Page Name": pageView, "Username": userName, "Player Id": plrId, "$email": email, "$phone": mobile, "$first_name": fname, "$last_name": lname, "Gender": gender, "DOB": dob, "Reg Region": state, "Reg City": city, "Reg Country": country, "PIN Code": pincode, "Reg IP": regIp, "Reg Device": regDevice, "Reg Date": regDate, "Player profile": profileStatus, "First Login Date": regDate, "Cash Current Balance": cashBal, "Promo Current Balance": praticeBal, "Source": refer_source, "AD Campaign": campignName, "First Deposit Date": firstDepositDate, "Device Type": deviceType, "OS Type": osType, "Client Type": clientTypeVal
+    }
+    );
+}
+
+function mixpanelLogin(domainName, state, referSource, campaignName, status, lastLoginIp, regIp, userName, playerId, registrationDate, regDevice, emailId, emailVerified, mobileNo, phoneVerified, serverDate, firstDepositDate, firstName, lastName, gender, dateOfBirth, city, postalCode, cashBal, practiceBal, device, appType, clientType, affiliateId, osType) {
+return;
+  domainName=domainName.replace("https://", "");
+    domainName=domainName.replace("http://", "");
+    registrationDate=parseDateForMixpanel(registrationDate);
+    if(firstDepositDate!="")firstDepositDate=parseDateForMixpanel(firstDepositDate);
+    if(dateOfBirth!="")dateOfBirth=parseDateForMixpanel(dateOfBirth);
+    if(serverDate!="")serverDate=parseDateForMixpanel(serverDate);
+    var olaStatus="No";
+    var refer_source="";
+    var profileComplete="No";
+    var profileStatus="MINI";
+    if(referSource=='OLA'||affiliateId==1)olaStatus="Yes";
+    if(referSource=='NONE')refer_source="Direct";
+    else refer_source=referSource;
+    if(status=="FULL") {
+        profileComplete="Yes";
+        profileStatus="FULL";
+    }
+    if(emailVerified=="Y")emailVerified="Yes";
+    else emailVerified="No";
+    if(phoneVerified=="Y")phoneVerified="Yes";
+    else phoneVerified="No";
+    if(campaignName=="")campaignName="NA";
+    mixpanel.identify(playerId);
+    mixpanel.people.set( {
+        "Username": userName, "$first_name": firstName, "$last_name": lastName, "Gender": gender, "DOB": dateOfBirth, "$region": state, "$city": city, "$email": emailId, "Email Verified": emailVerified, "$phone": "+91"+mobileNo, "Mobile Verified": phoneVerified, "Last Login IP": lastLoginIp, "Profile Complete": profileComplete, "Last login Date": serverDate, "Balance": parseInt(cashBal), "Last Activity": "Login", "Last Activity Date": serverDate, "Pin Code": postalCode, "OLA_Player": olaStatus
+    }
+    );
+    mixpanel.people.set_once( {
+        "Domain Name": domainName, "Player Id": playerId, "Registration_IP": regIp, "$created": registrationDate, "First login Date": registrationDate, "Language": "ENG", "Currency": "INR", "AD Campaign": campaignName, "Source": referSource
+    }
+    );
+    mixpanel.people.increment("Login Count");
+    if(dateOfBirth=="") {
+        dateOfBirth="1901-01-01T05:30:00";
+    }
+    if(firstName=="")firstName="NA";
+    if(lastName=="")lastName="NA";
+    if(gender=="")gender="NA";
+    if(state=="")state="NA";
+    if(city=="")city="NA";
+    if(postalCode=="")postalCode="NA";
+    var clientTypeVal="Full-Web";
+    if(clientType=="Mobile Web")clientTypeVal="Mobile-Web";
+    if(emailVerified=="N")emailVerified="No";
+    else emailVerified="Yes";
+    if(phoneVerified=="N")phoneVerified="No";
+    else phoneVerified="Yes";
+    if(firstDepositDate!="")mixpanel.people.set_once( {
+        "First Deposit Date": firstDepositDate
+    }
+    );
+    firstDepositDate=firstDepositDate==""?"1901-01-01T05:30:00":firstDepositDate;
+    if(cashBal==0.0)cashBal="0.00";
+    if(practiceBal==0.0)practiceBal="0.00";
+    mixpanel.register( {
+        "Last Login Date": serverDate
+    }
+    );
+    mixpanel.track("Login", {
+        "$distinct_id": playerId, "Domain Name": domainName, "Username": userName, "Player Id": playerId, "$first_name": firstName, "$last_name": lastName, "Gender": gender, "DOB": dateOfBirth, "Reg Region": state, "Reg City": city, "Reg Country": "India", "PIN Code": postalCode, "Reg IP": regIp, "Reg Date": registrationDate, "Reg Device": regDevice, "$email": emailId, "$phone": mobileNo, "First Login Date": registrationDate, "Player profile": profileStatus, "Source": refer_source, "AD Campaign": campaignName, "Cash Current Balance": cashBal, "Promo Current Balance": practiceBal, "First Deposit Date": firstDepositDate, "Device Type": device, "OS Type": osType, "Client Type": clientTypeVal
+    }
+    );
+}
+
+function mixpanelReg(domainName, referSource, regIP, userName, playerId, registrationDate, regDevice, emailId, mobileNo, cashBal, campaignName, device, appType, clientType, affiliateId, osType) {
+  return;
+    domainName=domainName.replace("https://", "");
+    domainName=domainName.replace("http://", "");
+    var olaStatus="No";
+    var refer_source="NA";
+    if(referSource=='OLA'||affiliateId==1)olaStatus="Yes";
+    if(referSource=='NONE')refer_source="Direct";
+    else refer_source=referSource;
+    var regClient="Full-Web";
+    if(clientType=="Mobile Web")regClient="Mobile-Web";
+    if(campaignName=="")campaignName="NA";
+    registrationDate=parseDateForMixpanel(registrationDate);
+    mixpanel.unregister("registrationDone");
+    mixpanel.identify(playerId);
+    mixpanel.people.set( {
+        "Username": userName, "$email": emailId, "Email Verified": "No", "$phone": "+91"+mobileNo, "Mobile Verified": "No", "Last Login IP": regIP, "Profile Complete": "No", "Login Count": 1, "Last login Date": registrationDate, "Balance": parseInt(cashBal), "Last Activity": "Login", "Last Activity Date": registrationDate, "OLA_Player": olaStatus
+    }
+    );
+    mixpanel.people.set_once( {
+        "Domain Name": domainName, "Player Id": playerId, "Registration_IP": regIP, "$created": registrationDate, "First login Date": registrationDate, "Language": "ENG", "Currency": "INR", "Registration Device": regDevice, "Registration Client": regClient, "Registration OS": "NA", "AD Campaign": campaignName, "Source": referSource
+    }
+    );
+    mixpanel.register( {
+        "Last Login Date": registrationDate
+    }
+    );
+    if(cashBal==0.0)cashBal="0.00";
+    mixpanel.track("Registration", {
+        "$distinct_id": playerId, "Domain Name": domainName, "Username": userName, "Player Id": playerId, "Reg IP": regIP, "Reg Date": registrationDate, "Reg Device": regDevice, "$email": emailId, "$phone": mobileNo, "First Login Date": registrationDate, "Player profile": "MINI", "Source": refer_source, "AD Campaign": campaignName, "Cash Current Balance": cashBal, "Promo Current Balance": "10000.0", "Device Type": device, "Client Type": regClient, "OS Type": osType
+    }
+    );
+    mixpanel.track("Login", {
+        "$distinct_id": playerId, "Domain Name": domainName, "Username": userName, "Player Id": playerId, "Reg Country": "India", "$first_name": 'NA', "$last_name": 'NA', "Gender": 'NA', "DOB": '1901-01-01T05:30:00', "Reg Region": 'NA', "Reg City": 'NA', "Reg Country": "India", "PIN Code": 'NA', "Reg IP": regIP, "Reg Date": registrationDate, "Reg Device": regDevice, "$email": emailId, "$phone": mobileNo, "First Login Date": registrationDate, "Player profile": "MINI", "Source": refer_source, "AD Campaign": campaignName, "Cash Current Balance": cashBal, "Promo Current Balance": "10000.0", "First Deposit Date": '1901-01-01T05:30:00', "Device Type": device, "OS Type": osType, "Client Type": regClient
+    }
+    );
+}
+
+function mixpanelLogout(domainName, url, userName, playerId, email, mobile, fname, lname, gender, dob, state, city, country, pincode, regIP, regDevice, regDate, status, cashCurBal, promoBal, source, adCampaingn, firstDepositDate, device, appType, clientType, osType) {
+return;
+  domainName=domainName.replace("https://", "");
+    domainName=domainName.replace("http://", "");
+    url=url.replace("https://", "");
+    url=url.replace("http://", "");
+    if(dob!="")dob=parseDateForMixpanel(dob);
+    regDate=parseDateForMixpanel(regDate);
+    if(firstDepositDate!="")firstDepositDate=parseDateForMixpanel(firstDepositDate);
+    var refer_source="";
+    var profileStatus="MINI";
+    if(source=='NONE')refer_source="Direct";
+    else refer_source=source;
+    if(status=="FULL") {
+        profileStatus="FULL";
+    }
+    if(url=="")url="/";
+    if(fname=="")fname="NA";
+    if(lname=="")lname="NA";
+    if(gender=="")gender="NA";
+    if(lname=="")lname="NA";
+    if(dob=="") {
+        dob="1901-01-01T05:30:00";
+    }
+    if(state=="")state="NA";
+    if(city=="")city="NA";
+    if(pincode=="")pincode="NA";
+    if(adCampaingn=="")adCampaingn="NA";
+    var clientTypeVal="Full-Web";
+    if(clientType=="Mobile Web")clientTypeVal="Mobile-Web";
+    if(cashCurBal==0.0)cashCurBal="0.00";
+    if(promoBal==0.0)promoBal="0.00";
+    firstDepositDate=firstDepositDate==""?"1901-01-01T05:30:00":firstDepositDate;
+    mixpanel.identify(playerId);
+    mixpanel.track("Exit / Logout", {
+        "$distinct_id": playerId, "Domain Name": domainName, "Username": userName, "Logout Page": url, "Player Id": playerId, "$email": email, "$phone": mobile, "$first_name": fname, "$last_name": lname, "Gender": gender, "DOB": dob, "Reg Region": state, "Reg City": city, "Reg Country": country, "PIN Code": pincode, "Reg IP": regIP, "Reg Device": regDevice, "Reg Date": regDate, "Player profile": profileStatus, "First Login Date": regDate, "Cash Current Balance": cashCurBal, "Promo Current Balance": promoBal, "Source": refer_source, "AD Campaign": adCampaingn, "First Deposit Date": firstDepositDate, "Device Type": device, "OS Type": osType, "Client Type": clientTypeVal
+    }
+    );
+}
+
+function mixpanelDepositResponse(domainName, userName, amt, payType, paySubType, depositStatus, bonusApplied, bonusType, bonusAmt, playerId, email, mobile, firstName, lastName, gender, dob, state, city, country, pincode, regIP, regDevice, regDate, status, cashBal, praticeBal, source, campignName, firstDepDate, curDate, device, appType, clientType, osType) {
+  return;  
+  domainName=domainName.replace("https://", "");
+    domainName=domainName.replace("http://", "");
+    var refer_source="";
+    var profileStatus="MINI";
+    if(source=='NONE')refer_source="Direct";
+    else refer_source=source;
+    if(status=="FULL") {
+        profileStatus="FULL";
+    }
+    if(dob!="")dob=parseDateForMixpanel(dob);
+    regDate=parseDateForMixpanel(regDate);
+    if(firstDepDate!="")firstDepDate=parseDateForMixpanel(firstDepDate);
+    if(curDate!="")curDate=parseDateForMixpanel(curDate);
+    if(bonusType=="") {
+        bonusType="NA";
+        bonusAmt="0.00";
+    }
+    if(cashBal==0.0)cashBal="0.00";
+    if(praticeBal==0.0)praticeBal="0.00";
+    if(amt=="")amt="NA";
+    if(payType=="")payType="NA";
+    if(paySubType=="")paySubType="NA";
+    if(bonusApplied=="")bonusApplied="NA";
+    if(bonusType=="")bonusType="NA";
+    if(bonusAmt=="")bonusAmt="NA";
+    if(campignName=="")campignName="NA";
+    var clientTypeVal="Full-Web";
+    if(clientType=="Mobile Web")clientTypeVal="Mobile-Web";
+    firstDepDate=firstDepDate==""?"1901-01-01T05:30:00":firstDepDate;
+    if(payType=="PREPAID_WALLET") {
+        payType="Cash Card";
+    }
+    else if(payType=="CASH_CARD") {
+        payType="KPR Card";
+    }
+    else if(payType=="WIRE_TRANS") {
+        payType="Wire Transfer";
+        paySubType="HDFC";
+    }
+    else if(payType=="CHEQUE_TRANS") {
+        payType="Cheque";
+    }
+    else if(payType=="NET_BANKING") {
+        payType="Netbanking";
+    }
+    else if(payType=="DEBIT_CARD") {
+        payType="Debit Card";
+        if(paySubType.indexOf(" ")!=-1)paySubType=paySubType.split(" ")[0];
+    }
+    else if(payType=="CREDIT_CARD") {
+        payType="Credit Card";
+        if(paySubType.indexOf(" ")!=-1)paySubType=paySubType.split(" ")[0];
+    }
+    mixpanel.identify(playerId);
+    mixpanel.track("Deposit", {
+        "$distinct_id": playerId, "Domain Name": domainName, "Username": userName, "Amount": amt, "Payment Type": payType, "Payment SubType": paySubType, "Deposit Status": depositStatus, "Is Bonus code Applied": bonusApplied, "Bonus Type": bonusType, "Bonus Amount": bonusAmt, "Player Id": playerId, "$email": email, "$phone": mobile, "$first_name": firstName, "$last_name": lastName, "Gender": gender, "DOB": dob, "Reg Region": state, "Reg City": city, "Reg Country": country, "PIN Code": pincode, "Reg IP": regIP, "Reg Device": regDevice, "Reg Date": regDate, "Player profile": profileStatus, "First Login Date": regDate, "Cash Current Balance": cashBal, "Promo Current Balance": praticeBal, "Source": refer_source, "AD Campaign": campignName, "First Deposit Date": firstDepDate, "Last Deposit Date": curDate, "Device Type": device, "OS Type": osType, "Client Type": clientTypeVal
+    }
+    );
+    if(depositStatus=="SUCCESS") {
+        mixpanel.people.set_once( {
+            "First Deposit Date": firstDepDate
+        }
+        );
+        mixpanel.people.set( {
+            "Balance": parseInt(cashBal), "Last Deposit Date": curDate, "Last Activity": "Deposit", "Last Activity Date": curDate, "Last Deposit Status": "Success"
+        }
+        );
+        mixpanel.people.increment("Deposit Count");
+        mixpanel.people.increment("Total Deposited Amount", amt);
+    }
+    else {
+        mixpanel.people.set( {
+            "Last Deposit Status": "Fail"
+        }
+        );
+    }
+}
+
+function mixpanelDepositIntiate(domainName, userName, amt, payType, paySubType, bonusCodeAppl, plrId, email, mobile, fname, lname, gender, dob, state, city, country, pincode, regIp, regDevice, regDate, cashBal, praticeBal, source, campignName, firstDepositDate, deviceType, appType, clientType, status, osType) {
+  returm;  
+  domainName=domainName.replace("https://", "");
+    domainName=domainName.replace("http://", "");
+    var refer_source="";
+    var profileStatus="MINI";
+    if(source=='NONE')refer_source="Direct";
+    else refer_source=source;
+    if(payType=="PREPAID_WALLET") {
+        payType="Cash Card";
+    }
+    else if(payType=="CASH_CARD") {
+        payType="KPR Card";
+    }
+    else if(payType=="WIRE_TRANS") {
+        payType="Wire Transfer";
+        paySubType="HDFC";
+    }
+    else if(payType=="CHEQUE_TRANS") {
+        payType="Cheque";
+    }
+    else if(payType=="NET_BANKING") {
+        payType="Netbanking";
+    }
+    else if(payType=="DEBIT_CARD") {
+        payType="Debit Card";
+        if(paySubType.indexOf(" ")!=-1)paySubType=paySubType.split(" ")[0];
+    }
+    else if(payType=="CREDIT_CARD") {
+        payType="Credit Card";
+        if(paySubType.indexOf(" ")!=-1)paySubType=paySubType.split(" ")[0];
+    }
+    if(status=="FULL") {
+        profileStatus="FULL";
+    }
+    if(dob!="")dob=parseDateForMixpanel(dob);
+    regDate=parseDateForMixpanel(regDate);
+    if(firstDepositDate!="")firstDepositDate=parseDateForMixpanel(firstDepositDate);
+    if(cashBal==0.0)cashBal="0.00";
+    if(praticeBal==0.0)praticeBal="0.00";
+    if(campignName=="")campignName="NA";
+    var clientTypeVal="Full-Web";
+    if(clientType=="Mobile Web")clientTypeVal="Mobile-Web";
+    bonusCodeAppl=bonusCodeAppl==""?"N":"Y";
+    firstDepositDate=firstDepositDate==""?"1901-01-01T05:30:00":firstDepositDate;
+    mixpanel.identify(plrId);
+    mixpanel.people.set( {
+        "Last Deposit Status": "Initiate"
+    }
+    );
+    mixpanel.track("Deposit Initiate", {
+        "$distinct_id": plrId, "Domain Name": domainName, "Amount": amt, "Payment Type": payType, "Payment SubType": paySubType, "Is Bonus code Applied": bonusCodeAppl, "Username": userName, "Player Id": plrId, "$email": email, "$phone": mobile, "$first_name": fname, "$last_name": lname, "Gender": gender, "DOB": dob, "Reg Region": state, "Reg City": city, "Reg Country": country, "PIN Code": pincode, "Reg IP": regIp, "Reg Device": regDevice, "Reg Date": regDate, "Player profile": profileStatus, "First Login Date": regDate, "Cash Current Balance": cashBal, "Promo Current Balance": praticeBal, "Source": refer_source, "AD Campaign": campignName, "First Deposit Date": firstDepositDate, "Device Type": deviceType, "OS Type": osType, "Client Type": clientTypeVal
+    }
+    );
+}
+
+function mixpanelWithdrawalReq(domainName, userName, amt, withType, withdrawSubType, plrId, email, mobile, fname, lname, gender, dob, state, city, country, pincode, regIp, regDevice, regDate, cashBal, praticeBal, source, campignName, firstDepositDate, deviceType, appType, clientType, currTime, status, osType) {
+  return;  
+  var refer_source="";
+    var profileStatus="MINI";
+    if(source=='NONE')refer_source="Direct";
+    else refer_source=source;
+    if(withType=="BANK_TRANS") {
+        withType="Bank Transfer";
+        if(withdrawSubType.indexOf("-")!=-1)withdrawSubType=withdrawSubType.split("-")[0];
+    }
+    else if(withType=="CASH_PAYMENT") {
+        withType="Cash Payment";
+        withdrawSubType="OLA";
+    }
+    else {
+        withType="Cheque";
+        withdrawSubType="HDFC";
+    }
+    if(status=="FULL") {
+        profileStatus="FULL";
+    }
+    if(cashBal==0.0)cashBal="0.00";
+    if(praticeBal==0.0)praticeBal="0.00";
+    if(campignName=="")campignName="NA";
+    var clientTypeVal="Full-Web";
+    if(clientType=="Mobile Web")clientTypeVal="Mobile-Web";
+    if(dob!="")dob=parseDateForMixpanel(dob);
+    regDate=parseDateForMixpanel(regDate);
+    if(firstDepositDate!="")firstDepositDate=parseDateForMixpanel(firstDepositDate);
+    firstDepositDate=firstDepositDate==""?"1901-01-01T05:30:00":firstDepositDate;
+    mixpanel.identify(plrId);
+    mixpanel.people.set( {
+        "Last Activity": "Withdrawal", "Last Activity Date": currTime
+    }
+    );
+    mixpanel.track("Withdrawal Initiate", {
+        "$distinct_id": plrId, "Domain Name": domainName, "Withdrawal Status": "Initiate", "Withdrawal Amount": amt, "Withdrawal Payment Type": withType, "Withdrawal Payment Subtype": withdrawSubType, "Username": userName, "Player Id": plrId, "$email": email, "$phone": mobile, "$first_name": fname, "$last_name": lname, "Gender": gender, "DOB": dob, "Reg Region": state, "Reg City": city, "Reg Country": country, "PIN Code": pincode, "Reg IP": regIp, "Reg Device": regDevice, "Reg Date": regDate, "Player profile": profileStatus, "First Login Date": regDate, "Cash Current Balance": cashBal, "Promo Current Balance": praticeBal, "Source": refer_source, "AD Campaign": campignName, "First Deposit Date": firstDepositDate, "Device Type": deviceType, "OS Type": osType, "Client Type": clientTypeVal
+    }
+    );
+}
+
+function parseDateForMixpanel(mixpanel_date) {
+  return;  
+  try {
+        if(mixpanel_date.indexOf(".")!=-1) {
+            var tmp=mixpanel_date.lastIndexOf(".");
+            mixpanel_date=mixpanel_date.substring(0, tmp);
+        }
+        if(mixpanel_date.search("/")!=-1) {
+            mixpanel_date=new Date(mixpanel_date.split("/")[2], (parseInt(mixpanel_date.split("/")[1])-1), mixpanel_date.split("/")[0]);
+        }
+        else {
+            var part_a=mixpanel_date.split(" ")[0];
+            var part_b=mixpanel_date.split(" ")[1];
+            mixpanel_date=new Date(part_a.split("-")[0], (parseInt(part_a.split("-")[1])-1), part_a.split("-")[2], part_b.split(":")[0], part_b.split(":")[1], part_b.split(":")[2]);
+        }
+        var tmp_Date=new Date(mixpanel_date);
+        tmp_Date.setHours(tmp_Date.getHours()-5);
+        tmp_Date.setMinutes(tmp_Date.getMinutes()-30);
+        var new_date=tmp_Date.getFullYear()+"-";
+        if((tmp_Date.getMonth()+1)<10)new_date+="0"+(tmp_Date.getMonth()+1)+"-";
+        else new_date+=(tmp_Date.getMonth()+1)+"-";
+        if((tmp_Date.getDate())<10)new_date+="0"+tmp_Date.getDate()+"T";
+        else new_date+=tmp_Date.getDate()+"T";
+        if((tmp_Date.getHours())<10)new_date+="0"+tmp_Date.getHours()+":";
+        else new_date+=tmp_Date.getHours()+":";
+        if((tmp_Date.getMinutes())<10)new_date+="0"+tmp_Date.getMinutes()+":";
+        else new_date+=tmp_Date.getMinutes()+":";
+        if((tmp_Date.getSeconds())<10)new_date+="0"+tmp_Date.getSeconds()+".0";
+        else new_date+=tmp_Date.getSeconds()+".0";
+        return new_date;
+    }
+    catch(e) {
+        return'';
+    }
+}
+
+function mixpanelCampaignParams() {
+  return;  
+  var campaign_keywords='utm_source utm_medium utm_campaign utm_content utm_term'.split(' '),
+    kw='',
+    params= {}
+    ,
+    first_params= {}
+    ;
+    var index;
+    for(index=0;
+    index<campaign_keywords.length;
+    ++index) {
+        kw=mixpanelGetQueryParam(document.URL, campaign_keywords[index]);
+        if(kw.length) {
+            params[campaign_keywords[index]+' [last touch]']=kw;
+        }
+    }
+    for(index=0;
+    index<campaign_keywords.length;
+    ++index) {
+        kw=mixpanelGetQueryParam(document.URL, campaign_keywords[index]);
+        if(kw.length) {
+            first_params[campaign_keywords[index]+' [first touch]']=kw;
+        }
+    }
+    mixpanel.people.set(params);
+    mixpanel.people.set_once(first_params);
+    mixpanel.register(params);
+}
+
+function mixpanelGetQueryParam(url, param) {
+  return;  
+  param=param.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS="[\\?&]"+param+"=([^&#]*)",
+    regex=new RegExp(regexS),
+    results=regex.exec(url);
+    if(results===null||(results&&typeof(results[1])!=='string'&&results[1].length)) {
+        return'';
+    }
+    else {
+        return decodeURIComponent(results[1]).replace(/\+/g, ' ');
+    }
+}
