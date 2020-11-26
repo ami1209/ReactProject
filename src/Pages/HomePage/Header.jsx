@@ -6,8 +6,18 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import {generateLoginToken} from '../../Utilities/utilities';
 import fetch from 'node-fetch';
 import NavigationBar from './NavigationBar';
+import { withStyles } from '@material-ui/core/styles';
+// import classes from '*.module.css';
 // import Nav from "./Nav";
 
+const styles = theme => ({
+   root:{
+      'side-bar-container':{
+         backgroundColor: "red",
+         height: "100%"
+   }
+   }
+}) 
 
 const validEmailRegex = 
   RegExp("^[a-zA-Z0-9@._-]*$");
@@ -24,7 +34,7 @@ const validateForm = errors => {
 class Header extends Component{
    constructor(props){
       super(props)
-      this.state = {userName : '',requestIp:'', password: '', loginToken:'', playerToken: '', FPModal:false, show: false, menu: false, errors: {
+      this.state = {userName : '',requestIp:'127.0.0.1', password: '', loginToken:'', playerToken: '', FPModal:false, show: false, menu: false, errors: {
          userName: '',
          password: '',
        }};
@@ -120,8 +130,9 @@ class Header extends Component{
        if(this.state.loginToken == null || this.state.loginToken == ''){
           this.setState({loginToken: generateLoginToken()})
        }
+       debugger;
       var enc_pass = (MD5(MD5(this.state.password) + this.state.loginToken));
-     this.setIpAddress();
+   //   this.setIpAddress();
       axios.post('http://local.khelplayrummy.com/component/weaver/?task=authorisation.playerLoginFromReact',
        {"userName":this.state.userName,"password":enc_pass,"loginToken":this.state.loginToken,"requestIp":this.state.requestIp,
        "state":"NA","city":"NA","domainName":"test.khelplayrummy.com","deviceType":"PC",
@@ -152,6 +163,7 @@ class Header extends Component{
 
    }
     render(){
+       const {classes} = this.props;
       const {errors} = this.state;
         return(
             <div>
@@ -171,7 +183,9 @@ class Header extends Component{
                         <ul>
                            <li className="last"><a onClick={this.showMenu} className="mobile_menubar"><i className="fa fa-bars"></i></a></li>
                         </ul>
-                        {this.state.menu?  <SwipeableDrawer open = {this.state.menu} anchor= "right" ModalProps= {{onBackdropClick: this.showMenu}}>
+                        {this.state.menu?  <SwipeableDrawer
+                         open = {this.state.menu} anchor= "right" ModalProps= {{onBackdropClick: this.showMenu}}
+                         classes={{root:classes.root}}>
          <NavigationBar></NavigationBar>
          </SwipeableDrawer>:""}
                      </div>
@@ -306,4 +320,4 @@ class Header extends Component{
 }
 
 
-export default Header;
+export default withStyles(styles) (Header);

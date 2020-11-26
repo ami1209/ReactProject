@@ -790,6 +790,23 @@ transform:rotate(359deg)
 #home_forgot .modal-footer .footer_mobile a .call_icon, #home_forgot .modal-footer .footer_mobile a .chat_icon, #home_forgot .modal-footer .footer_mobile a .mail_icon, #home_forgot .modal-footer p .popup_call, #home_forgot .modal-footer p .popup_chat, #home_forgot .modal-footer p .popup_mail, #home_forgot .modal-header .close, #home_forgot_thank .modal-body .form-group.icon span, #home_forgot_thank .modal-footer .footer_mobile a .call_icon, #home_forgot_thank .modal-footer .footer_mobile a .chat_icon, #home_forgot_thank .modal-footer .footer_mobile a .mail_icon, #home_forgot_thank .modal-footer p .popup_call, #home_forgot_thank .modal-footer p .popup_chat, #home_forgot_thank .modal-footer p .popup_mail, #home_forgot_thank .modal-header .close, #home_login .modal-footer .footer_mobile a .call_icon, #home_login .modal-footer .footer_mobile a .chat_icon, #home_login .modal-footer .footer_mobile a .mail_icon, #home_login .modal-footer p .popup_call, #home_login .modal-footer p .popup_chat, #home_login .modal-footer p .popup_mail, #home_login .modal-header .close, #home_register .modal-body .no_crcard span.no_crcard_img, #home_register .modal-footer .footer_mobile a .call_icon, #home_register .modal-footer .footer_mobile a .chat_icon, #home_register .modal-footer .footer_mobile a .mail_icon, #home_register .modal-footer p .popup_call, #home_register .modal-footer p .popup_chat, #home_register .modal-footer p .popup_mail, #home_register .modal-header .close, #notification .modal-footer .footer_mobile a .call_icon, #notification .modal-footer .footer_mobile a .chat_icon, #notification .modal-footer .footer_mobile a .mail_icon, #notification .modal-footer p .popup_call, #notification .modal-footer p .popup_chat, #notification .modal-footer p .popup_mail, #notification .modal-header .close, #notification1 .modal-header .close, .android_btn, .android_real, .app_store, .banner .downarrow, .banner .slick-slider .slick-next, .banner .slick-slider .slick-prev, .coming_soon .modal-header .close, .featurescontent div span.icon_outer span.icon1, .featurescontent div span.icon_outer span.icon2, .featurescontent div span.icon_outer span.icon3, .featurescontent div span.icon_outer span.icon4, .geting_started .step ul li span.icon.step1 a, .geting_started .step ul li span.icon.step2 a, .geting_started .step ul li span.icon.step3 a, .google_play, .how_to_play .modal-header .close, .ios_btn, .scrollToTopdiv .container .scrollToTop{
 	/* background: url(../images/common/home-sprite.png) no-repeat */
 }
+
+/* Navigation Menu for Mobile */
+
+.MuiDrawer-paper {
+    top: 0;
+    flex: 1 0 auto;
+    height: 100%;
+    display: flex;
+    outline: 0;
+    z-index: 1200;
+    position: fixed;
+    width: 280px;
+    overflow-y: auto;
+    flex-direction: column;
+    -webkit-overflow-scrolling: touch;
+}
+
 .slick-slider {
 	position: relative;
 	display: block;
